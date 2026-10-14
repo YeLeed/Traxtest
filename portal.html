@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prizma.AI · Trax</title>
+<link rel="stylesheet" href="assets/trax.css?v=20261014b">
+<style>
+  #prizman-launcher {
+    position: fixed;
+    right: 20px;
+    bottom: 16px;
+    width: 250px;
+    height: auto;
+    z-index: 2147482999;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 200ms ease, transform 200ms ease;
+    animation: prizman-bob 3.5s ease-in-out infinite;
+  }
+
+  #prizman-launcher img { display: block; width: 100%; }
+
+  /* animation:none instead of animation-play-state keeps the hover/hide transforms
+     from being overridden by the still-running bob keyframes */
+  #prizman-launcher:hover {
+    animation: none;
+    transform: scale(1.04);
+    transition: transform 150ms ease;
+  }
+
+  #prizman-launcher:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 4px;
+    border-radius: 12px;
+  }
+
+  #prizman-launcher.is-hidden {
+    animation: none;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+  }
+
+  @keyframes prizman-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #prizman-launcher { animation: none; }
+  }
+</style>
+</head>
+<body class="portal-page">
+
+<header class="topbar">
+  <div class="topbar-left">
+    <span class="wordmark">TRAX</span>
+    <span class="pill">Prizma.AI</span>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" type="button" aria-label="Help" id="help-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9a2.5 2.5 0 1 1 3.7 2.2c-.7.5-1.2 1-1.2 2"></path><line x1="12" y1="17" x2="12" y2="17.01"></line></svg>
+    </button>
+    <div class="avatar" id="user-initials"></div>
+    <div class="user-info">
+      <div class="user-name" id="user-name"></div>
+      <div class="user-sub" id="user-org"></div>
+    </div>
+    <button class="btn btn-ghost signout" id="signout-btn" type="button">Sign out</button>
+  </div>
+</header>
+
+<div class="app-body">
+  <nav class="sidebar" aria-label="Prizma">
+    <div class="nav-list">
+      <a class="nav-item active" href="#" title="Dashboard" aria-label="Dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></a>
+      <a class="nav-item" href="#" title="Invoices" aria-label="Invoices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></a>
+      <a class="nav-item" href="#" title="Payments" aria-label="Payments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></a>
+      <a class="nav-item" href="#" title="Rate Control" aria-label="Rate Control"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></a>
+      <a class="nav-item" href="#" title="Cost Allocation" aria-label="Cost Allocation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></a>
+      <a class="nav-item" href="#" title="Support" aria-label="Support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="main-inner">
+      <div class="page-head">
+        <div>
+          <h1 id="greeting">Welcome back</h1>
+          <p class="page-sub" id="page-sub"></p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" type="button" id="primary-action"></button>
+          <button class="btn btn-primary" type="button" id="ask-btn">Ask Prizman</button>
+        </div>
+      </div>
+
+      <div id="dash">
+        <div class="kpi-row"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="presenter-bar" id="presenter-bar">
+  <label for="presenter-persona">Presenter</label>
+  <select id="presenter-persona">
+    <option value="marta">Marta · carrier</option>
+    <option value="daniel">Daniel · client</option>
+  </select>
+  <button id="presenter-new-conv" type="button">New conversation</button>
+  <button id="presenter-hide-messenger" type="button">Hide Messenger</button>
+  <span class="kbd">h hides</span>
+</div>
+
+<button id="prizman-launcher" type="button" aria-label="Need help? Ask Prizman">
+  <img src="assets/prizman-launcher.png" alt="">
+</button>
+
+<script src="assets/app.js?v=20261014b"></script>
+<script src="assets/help-drawer.js?v=20261014b"></script>
+<script>
+(function () {
+  var launcher = document.getElementById('prizman-launcher');
+
+  Intercom('onShow', function () {
+    launcher.classList.add('is-hidden');
+  });
+
+  Intercom('onHide', function () {
+    launcher.classList.remove('is-hidden');
+  });
+
+  launcher.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      Intercom('show');
+    }
+  });
+})();
+</script>
+<script>
+(function () {
+  var trax = window.traxDemo;
+  var key = trax.currentPersona();
+  if (!key || !trax.PERSONAS[key]) { location.href = 'index.html'; return; }
+  var me = trax.PERSONAS[key];
+  var dash = document.getElementById('dash');
+
+  var COPY = {
+    carrier: { sub: 'Your invoices for Northwind Consumer Goods (client NCG-114).', action: 'Submit invoice' },
+    client: { sub: 'Freight spend, audit savings and carrier compliance for Northwind Consumer Goods.', action: 'Export spend report' }
+  };
+  var LABELS = { short_paid: 'Short-paid', pending_documentation: 'Pending docs', approved_for_payment: 'Approved', in_audit: 'In audit', paid: 'Paid',
+    received: 'Received', validating: 'Validating', compliant: 'Compliant', insurance_expiring: 'Insurance expiring', scheduled: 'Scheduled', waiting_on_carrier: 'Waiting on you' };
+
+  var esc = trax.esc;
+  function chip(status) { return '<span class="chip chip-' + esc(status) + '">' + esc(LABELS[status] || status.replace(/_/g, ' ')) + '</span>'; }
+  function period(p) { return trax.longDate(p + '-01').replace(/^1 /, ''); }
+  function card(i, title, body, meta, cls) {
+    return '<section class="card' + (cls ? ' ' + cls : '') + '" style="--i:' + i + '"><div class="card-head"><h2 class="card-title">' + esc(title) + '</h2>' +
+      (meta ? '<span class="card-meta">' + esc(meta) + '</span>' : '') + '</div>' + body + '</section>';
+  }
+  function kpi(i, label, value, sub, tone) {
+    return '<div class="card kpi" style="--i:' + i + '"><div class="kpi-label">' + esc(label) + '</div><div class="kpi-value">' + esc(value) + '</div><div class="kpi-sub' + (tone ? ' ' + tone : '') + '">' + esc(sub) + '</div></div>';
+  }
+  function compact(display) {
+    var n = Number(String(display).replace(/[^0-9.]/g, ''));
+    return n >= 1e6 ? '$' + (n / 1e6).toFixed(2) + 'M' : n >= 1e3 ? '$' + (n / 1e3).toFixed(1) + 'K' : trax.money(n);
+  }
+  function kv(k, v) { return '<div class="kv"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>'; }
+
+  function renderCarrier(d) {
+    var c = d.invoice_summary.counts_by_status, pay = d.payments, last = pay.last_remittance;
+    var kpis = '<div class="kpi-row">' +
+      kpi(0, 'In audit', c.in_audit, (c.received + c.validating) + ' more received or validating') +
+      kpi(1, 'Pending documentation', c.pending_documentation, d.invoice_summary.action_required_count + ' needs your action', 'warning') +
+      kpi(2, 'Approved for payment', c.approved_for_payment, 'Next run ' + trax.longDate(pay.next_payment_run), 'positive') +
+      kpi(3, 'Short-paid (30 days)', c.short_paid_last_30_days, c.paid_last_30_days + ' paid in full', 'danger') + '</div>';
+
+    var rows = d.invoices.map(function (inv) {
+      var lane = inv.origin ? esc(inv.origin) + ' → ' + esc(inv.destination) : '<span class="sub">PRO ' + esc(inv.pro_number) + '</span>';
+      var billed = esc(inv.billed_amount_display || trax.money(inv.billed_amount)) +
+        (inv.paid_amount_display ? '<span class="sub">Paid ' + esc(inv.paid_amount_display) + '</span>' : '');
+      return '<tr' + (inv.status === 'short_paid' || inv.action_required ? ' class="attention"' : '') + '>' +
+        '<td class="mono">' + esc(inv.invoice_number) + '<span class="sub">Submitted ' + esc(trax.longDate(inv.submitted_on)) + '</span></td>' +
+        '<td>' + lane + '</td><td class="num">' + billed + '</td><td>' + chip(inv.status) + '</td></tr>';
+    }).join('');
+    var invoices = card(4, 'Your invoices',
+      '<table><thead><tr><th>Invoice</th><th>Lane</th><th class="num">Billed</th><th>Status</th></tr></thead><tbody>' + rows + '</tbody></table>',
+      'As of ' + trax.longDate(d.invoice_summary.as_of));
+
+    var payments = card(5, 'Payments',
+      '<div class="kpi-label">Next payment run · ' + esc(trax.longDate(pay.next_payment_run)) + '</div>' +
+      '<div class="big-num">' + esc(pay.approved_amount_in_next_run_display || trax.money(pay.approved_amount_in_next_run)) + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:68%"></div></div>' +
+      '<div style="margin-top:12px">' +
+      kv('Last remittance', esc(last.payment_reference)) +
+      kv('Paid on', esc(trax.longDate(last.payment_date)) + ' · ' + esc(last.method.toUpperCase())) +
+      kv('Gross / adjustments', esc(last.gross_amount_display) + ' / ' + esc(last.adjustment_amount_display)) +
+      kv('Net paid', esc(last.net_paid_display)) + '</div>');
+
+    dash.innerHTML = kpis + '<div class="stack">' + invoices + payments + '</div>';
+  }
+
+  function renderClient(d) {
+    var s = d.spend_summary, ca = d.cost_allocation;
+    var kpis = '<div class="kpi-row">' +
+      kpi(0, 'Invoices audited', s.invoices_audited.toLocaleString('en-US'), period(s.period)) +
+      kpi(1, 'Approved for payment', compact(s.approved_amount_display), s.approved_amount_display + ' · ' + period(s.period)) +
+      kpi(2, 'Savings identified', compact(s.savings_identified_display), s.savings_identified_display + ' recovered by audit', 'positive') +
+      kpi(3, 'Exceptions open', s.exceptions_open, 'Awaiting review', 'warning') + '</div>';
+
+    var allocation = card(4, 'Cost allocation',
+      kv('Period', period(ca.period)) +
+      kv('Run status', chip(ca.allocation_run_status)) +
+      kv('Next allocation run', esc(trax.longDate(ca.next_allocation_run))));
+
+    var rows = d.carrier_compliance.map(function (c) {
+      return '<tr' + (c.status !== 'compliant' ? ' class="attention"' : '') + '><td class="mono">' + esc(c.scac) + '</td><td>' + esc(c.legal_name) + '</td><td>' + chip(c.status) + '</td>' +
+        '<td class="num">' + esc(trax.longDate(c.insurance_expires)) + '</td></tr>';
+    }).join('');
+    var compliance = card(6, 'Carrier compliance',
+      '<table><thead><tr><th>SCAC</th><th>Carrier</th><th>Status</th><th class="num">Insurance expires</th></tr></thead><tbody>' + rows + '</tbody></table>',
+      (d.client_account ? d.client_account.active_carriers + ' active carriers' : ''));
+
+    dash.innerHTML = kpis + '<div class="stack">' + allocation + compliance + '</div>';
+  }
+
+  function renderError() {
+    dash.innerHTML = '<section class="card error-card"><div class="e-icon">!</div><p>Couldn\'t load your Prizma data. Refresh to try again.</p></section>';
+  }
+
+  var hour = new Date().getHours();
+  var copy = COPY[me.kind];
+  document.getElementById('greeting').textContent = (hour < 12 ? 'Good morning, ' : hour < 18 ? 'Good afternoon, ' : 'Good evening, ') + me.name.split(' ')[0];
+  document.getElementById('page-sub').textContent = copy.sub;
+  document.getElementById('primary-action').textContent = copy.action;
+  document.getElementById('user-initials').textContent = me.initials;
+  document.getElementById('user-name').textContent = me.name;
+  document.getElementById('user-org').textContent = me.org;
+
+  fetch(trax.contextUrl(key))
+    .then(function (r) { if (!r.ok) throw new Error('bad status'); return r.json(); })
+    .then(function (d) { if (me.kind === 'carrier') renderCarrier(d); else renderClient(d); })
+    .catch(renderError);
+
+  function showMessenger() { if (window.Intercom) window.Intercom('show'); }
+  document.getElementById('help-btn').addEventListener('click', showMessenger);
+  document.getElementById('ask-btn').addEventListener('click', showMessenger);
+  document.getElementById('signout-btn').addEventListener('click', function () { trax.signOut(); });
+
+  var bar = document.getElementById('presenter-bar');
+  var select = document.getElementById('presenter-persona');
+  select.value = key;
+  select.addEventListener('change', function (e) { trax.signIn(e.target.value); });
+  document.getElementById('presenter-new-conv').addEventListener('click', function () {
+    if (window.Intercom) window.Intercom('shutdown');
+    trax.clearIntercomCookies();
+    trax.reloadClean();
+  });
+  document.getElementById('presenter-hide-messenger').addEventListener('click', function () {
+    if (window.Intercom) window.Intercom('hide');
+  });
+  document.addEventListener('keydown', function (e) {
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    if (e.key === 'h' && !e.metaKey && !e.ctrlKey && !e.altKey) bar.classList.toggle('hidden');
+  });
+})();
+</script>
+</body>
+</html>

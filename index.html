@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · Prizma.AI · Trax</title>
+<link rel="stylesheet" href="assets/trax.css?v=20261014b">
+</head>
+<body>
+
+<div class="signin-page">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="wordmark">TRAX</span>
+      <span class="pill">Prizma.AI</span>
+    </div>
+    <div class="topbar-right">
+      <span>Freight Audit &amp; Payment</span>
+      <span>Spend Analytics</span>
+      <span>Carrier Network</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="dot"></span>Prizma.AI · Carrier &amp; client portal</span>
+      <h1>Freight audit and payment, <em>with answers built in</em></h1>
+      <p class="hero-sub">Invoices, payments, disputes and allocations in one place, and Prizman on hand to answer the moment a question comes up.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="signin-btn" type="button">Sign in to Prizma
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <span class="note">Single sign-on via your organisation</span>
+      </div>
+      <div class="hero-stats">
+        <div><strong>$4.3M</strong>approved this month</div>
+        <div><strong>1,284</strong>invoices audited</div>
+        <div><strong>24/7</strong>help from Prizman</div>
+      </div>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="glass g1" style="--i:0">
+        <div class="g-label">Invoice status</div>
+        <div class="g-row"><span class="g-title">INV-2026-0871</span><span class="g-chip red">Short-paid</span></div>
+        <div class="g-row"><span class="g-amount">$4,415.00</span><span class="g-meta">of $4,820.00 billed</span></div>
+        <div class="g-meta">Columbus, OH → Allentown, PA · RV adjustment -$405.00</div>
+      </div>
+      <div class="glass g2" style="--i:1">
+        <div class="g-label">Next payment run</div>
+        <div class="g-row"><span class="g-title">21 October 2026</span><span class="g-chip green">Approved</span></div>
+        <div class="g-row"><span class="g-amount">$2,760.00</span><span class="g-meta">ACH · net 30</span></div>
+        <div class="g-bar"><span></span></div>
+      </div>
+      <div class="glass g3" style="--i:2">
+        <div class="g-label">Dispute case</div>
+        <div class="g-row"><span class="g-title">TRX-DSP-2026-04117</span><span class="g-chip blue">In review</span></div>
+        <div class="bubble">Prizman: I've opened a dispute for the $405 rate variance. You can track it under Payments.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="signin-footer">Trax Technologies · Prizma demo environment · not production</footer>
+</div>
+
+<div class="modal" id="signin-modal" role="dialog" aria-modal="true" aria-labelledby="signin-title">
+  <div class="modal-dialog">
+    <h2 id="signin-title">Sign in to Prizma</h2>
+    <p>Choose a demo user to continue.</p>
+    <div class="persona-list">
+      <button class="persona-btn" type="button" data-persona="marta">
+        <span class="avatar">MK</span>
+        <span>
+          <span class="p-name">Marta Kowalski</span>
+          <span class="p-org">Meridian Freight Lines</span>
+          <span class="p-role">Billing analyst · Carrier · SCAC MRDF</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </button>
+      <button class="persona-btn" type="button" data-persona="daniel">
+        <span class="avatar">DR</span>
+        <span>
+          <span class="p-name">Daniel Reyes</span>
+          <span class="p-org">Northwind Consumer Goods</span>
+          <span class="p-role">Freight Payables Manager · Client NCG-114</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </button>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" id="modal-close" type="button">Cancel</button></div>
+  </div>
+</div>
+
+<script src="assets/app.js?v=20261014b"></script>
+<script src="assets/help-drawer.js?v=20261014b"></script>
+<script>
+(function () {
+  var modal = document.getElementById('signin-modal');
+  function close() { modal.classList.remove('open'); localStorage.removeItem('trax_pending_prompt'); }
+  document.getElementById('signin-btn').addEventListener('click', function () { modal.classList.add('open'); });
+  document.getElementById('modal-close').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  document.querySelectorAll('.persona-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () { window.traxDemo.signIn(btn.dataset.persona); });
+  });
+})();
+</script>
+</body>
+</html>
